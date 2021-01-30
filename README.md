@@ -1,1 +1,1 @@
-# mcc_homework
+# Tareas y proyectos de la Maestria en Ciencias Computacionales
