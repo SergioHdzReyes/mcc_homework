@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int fd;
+int fd, opcion;
 char buff[160];
 char *filename;
 struct {
