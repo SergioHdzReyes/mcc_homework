@@ -36,6 +36,7 @@ int main(void)
       break;
     case 0:
       printf("Saliendo del sistema...\n\n\n");
+      save_actions();
       print_file();
       exit(0);
       break;

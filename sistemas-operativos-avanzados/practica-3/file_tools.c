@@ -5,6 +5,17 @@ void load_config()
   filename = "system_calls.txt";
   matrix_config.cols = 15;
   matrix_config.rows = 10;
+
+  number_text[1] = "UNO";
+  number_text[2] = "DOS";
+  number_text[3] = "TRES";
+  number_text[4] = "CUATRO";
+  number_text[5] = "CINCO";
+  number_text[6] = "SEIS";
+  number_text[7] = "SIETE";
+  number_text[8] = "OCHO";
+  number_text[9] = "NUEVE";
+  number_text[10] = "DIEZ";
 }
 
 // Crea el archivo principal y lo llena
@@ -47,7 +58,7 @@ void create_base_file()
 void modify_column(int col)
 {
   char *character;
-  int position = 0;
+  position = 0;
   col--;
 
   if (((col < 6) || (col > 15))) {
@@ -75,11 +86,13 @@ void modify_column(int col)
       write(fd, character, 1);
     }
   }
+
+  actions++;
 }
 
 void modify_coordinate(int col, int row)
 {
-  int position = 0;
+  position = 0;
   if (!((col >= 3) && (col <= 5))) {
     printf("Columna no permitida, ingrese un valor entre 3 y 5\n");
     getchar();
@@ -97,11 +110,13 @@ void modify_coordinate(int col, int row)
   position = (((row - 1) * matrix_config.cols) + col-1);
   lseek(fd, position, SEEK_SET);
   write(fd, buff, 1);
+
+  actions++;
 }
 
 void print_file()
 {
-  int position = 0;
+  position = 0;
 
   lseek(fd, 0, SEEK_SET);
 
@@ -109,5 +124,18 @@ void print_file()
     memset(buff, 0, sizeof(buff));
     read(fd, buff, 15);
     printf("%s\n", buff);
+  }
+}
+
+void save_actions()
+{
+  position = 0;
+  char *str = number_text[actions];
+  lseek(fd, 0, SEEK_SET);
+
+  for (int i=0; i<strlen(str); i++) {
+    position = (i*matrix_config.cols);
+    lseek(fd, position, SEEK_SET);
+    write(fd, &str[i], 1);
   }
 }
