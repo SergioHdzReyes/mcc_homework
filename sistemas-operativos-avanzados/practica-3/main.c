@@ -2,22 +2,30 @@
 #include "file_tools.h"
 #include "menu.h"
 
+#define clear() printf("\033[H\033[J")
+
 int main(void)
 {
   load_config();
   create_base_file();
 
-  system("clear");
   while (1) {
-    //system("clear");
+    clear();
     print_menu();
-
     scanf("%d", &opcion);
 
     switch (opcion) {
     case 1:
+      printf("Ingrese columna a modificar: \n");
+      scanf("%d", &col_sel);
+      printf("Ingrese fila a modificar: \n");
+      scanf("%d", &row_sel);
+      modify_coordinate(col_sel, row_sel);
       break;
     case 2:
+      printf("Ingrese columna a modificar: \n");
+      scanf("%d", &col_sel);
+      modify_column(col_sel);
       break;
     case 3:
       read(fd, buff, sizeof(buff));
@@ -27,7 +35,8 @@ int main(void)
       create_base_file();
       break;
     case 0:
-      printf("Saliendo del sistema...\n");
+      printf("Saliendo del sistema...\n\n\n");
+      print_file();
       exit(0);
       break;
     default:
@@ -35,8 +44,10 @@ int main(void)
       break;
     }
 
-    //getchar();
+    getchar();
   }
+
+  close(fd);
 
   return 0;
 }

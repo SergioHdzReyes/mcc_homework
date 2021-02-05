@@ -7,9 +7,10 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-int fd, opcion;
-char buff[160];
+int fd, opcion, col_sel, row_sel;
+char buff[150];
 char *filename;
 struct {
   int cols;
@@ -18,5 +19,8 @@ struct {
 
 void load_config();
 void create_base_file();
+void modify_column(int col);
+void modify_coordinate(int col, int row);
+void print_file();
 
 #endif
