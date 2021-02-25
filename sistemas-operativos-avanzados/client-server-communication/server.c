@@ -1,18 +1,36 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#define SERVER_FILE "fifo_server"
+#define SIZE_MSG 100
 
 int main(int c, char *s[])
 {
-  int  fd1;
-  char msg[100]="";
+  int fd_server;
+  char msg[SIZE_MSG];
 
-  fd1 = open("fifo", O_RDONLY);
+  // Se intenta abrir fifo para recibir informacion de clientes
+  if (mkfifo(SERVER_FILE, 0644) == -1) {
+    printf("Error al crear archivo fifo");
+    return 1;
+  }
+  fd_server = open(SERVER_FILE, O_RDONLY);
 
-  if(fd1 != -1) {
-    read(fd1, msg, 100);
-    puts(msg);
+  if(fd_server != -1) {
+    //    while(1) {
+      read(fd_server, msg, SIZE_MSG);
+      printf("Contenido: %s", msg);
+      //    }
+  } else {
+    printf("No fue posible crear fifo de servidor.\nAbortando...");
+    return 1;
   }
 
-  close(fd1);
+  close(fd_server);
+  unlink(SERVER_FILE);
+
+  return 0;
 }
