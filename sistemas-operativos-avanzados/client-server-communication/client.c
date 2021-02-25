@@ -2,6 +2,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 
 #include "utils.h"
 #define SERVER_FILE "fifo_server"

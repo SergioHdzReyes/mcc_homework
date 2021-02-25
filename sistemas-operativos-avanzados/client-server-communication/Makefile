@@ -9,4 +9,4 @@ all:	client
 client:
 	$(CC) $(CFLAGS) -o client -c client.c
 clean:
-	$(RM) -r *.o *~ *.o.dSYM
+	$(RM) -r *.o *~ *.o.dSYM server client fifo_*
