@@ -10,8 +10,8 @@
 
 int main(int c, char *s[])
 {
-  int fd_server;
-  char msg[SIZE_MSG];
+  int fd_server, fd_client;
+  char msg[SIZE_MSG], client_fifo_name[100];
 
   // Se intenta abrir fifo para recibir informacion de clientes
   if (mkfifo(SERVER_FILE, 0644) == -1) {
@@ -29,6 +29,11 @@ int main(int c, char *s[])
     printf("No fue posible crear fifo de servidor.\nAbortando...");
     return 1;
   }
+
+  // Se procesa respuesta al cliente
+  sprintf(client_fifo_name, "fifo_%d", received.pid);
+  fd_client = open(client_fifo_name, O_WRONLY);
+  write(fd_client, "RESPUESTA A CLIENTE", 100);
 
   close(fd_server);
   unlink(SERVER_FILE);

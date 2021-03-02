@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "utils.h"
+#include "client_utils.h"
 #define SERVER_FILE "fifo_server"
 #define SIZE_MSG 100
 
@@ -38,6 +38,8 @@ int main(int c, char *s[])
     close(fd_server);
     return 2;
   }
+
+  printf("Respuesta de servidor:\n%s", msg);
 
   close(fd_server);
   unlink(fifo_name);

@@ -1,12 +1,11 @@
 CC = gcc
 CFLAGS = -g
-#SRCS = client.c server.c
-#OBJS = $(SRCS:.c=.o)
 
-all:	client
+all:	client server
 	@echo Programa basico de comunicacion entre procesos
-#	$(CC) $(CFLAGS) -o client
 client:
-	$(CC) $(CFLAGS) -o client -c client.c
+	$(CC) $(CFLAGS) -o client client.c client_utils.c
+server:
+	$(CC) $(CFLAGS) -o server server.c server_utils.c
 clean:
 	$(RM) -r *.o *~ *.o.dSYM server client fifo_*

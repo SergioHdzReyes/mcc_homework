@@ -4,9 +4,9 @@
 #define LIMIT_DATA 3
 
 struct {
-  char *pid;
+  int pid;
   char *fullname;
-  char *type;
+  int type;
 } received;
 
 void process_client_info(char *message);

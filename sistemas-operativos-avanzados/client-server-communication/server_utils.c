@@ -16,9 +16,8 @@ void process_client_info(char *message)
    
   while( token != NULL ) {
     aux++;
-    if (aux > LIMIT_DATA) {
-      printf("El maximo numero de datos enviados es de %d", LIMIT_DATA);
-      exit(1);
+    if (aux == LIMIT_DATA) {
+      break;
     }
 
     printf( " %s\n", token );
@@ -28,7 +27,8 @@ void process_client_info(char *message)
     strcpy(data[aux], token);
   }
 
-  strcpy(received.pid, data[0]);
+  received.pid = atoi(data[0]);
+  received.fullname = malloc(strlen(data[1])*sizeof(char) +1);
   strcpy(received.fullname, data[1]);
-  strcpy(received.type, data[2]);
+  received.type = atoi(data[2]);
 }
