@@ -1,0 +1,43 @@
+body {
+    background-image: url("../img/fondo.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.user-path {
+    font-weight: bold;
+}
+
+.margin-terminal {
+    width: 50vw;
+    height: 50vh;
+    margin-top: 25vh;
+    background-color: gray;
+    border-radius: 10px;
+    opacity: 0.8;
+}
+
+.terminal {
+    background-color: black;
+    color: white;
+    min-height: 200px;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    padding: 5px;
+    border: 5px solid gray;
+}
+
+.username {
+    color: #ff2f25
+}
+
+.path {
+    color: #837fff
+}
+
+.user-input {
+    background-color: black;
+    border: 0px;
+    outline: none !important;
+}
