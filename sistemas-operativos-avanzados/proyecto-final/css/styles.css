@@ -4,12 +4,7 @@ body {
     background-size: cover;
 }
 
-.user-path {
-    font-weight: bold;
-}
-
 .margin-terminal {
-    width: 50vw;
     height: 50vh;
     margin-top: 25vh;
     background-color: gray;
@@ -26,18 +21,22 @@ body {
     height: 100%;
     padding: 5px;
     border: 5px solid gray;
+    cursor: text;
 }
 
 .username {
-    color: #ff2f25
+    color: #ff2f25;
+    font-weight: bold
 }
 
 .path {
-    color: #837fff
+    color: #837fff;
+    font-weight: bold
 }
 
-.user-input {
+#user-input {
     background-color: black;
     border: 0px;
     outline: none !important;
+    width: 80%;
 }
