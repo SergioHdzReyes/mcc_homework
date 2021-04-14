@@ -26,22 +26,22 @@ int load_system()
 int save_to_disk()
 {
   write(os_fd, boot, 1024);
-  write(os_fd, lbl, 1024);
-  write(os_fd, lil, 1024);
-  write(os_fd, Lista_inode, 1024*4);
-  write(os_fd, raiz, 1024);
+  write(os_fd, fbl, 1024);
+  write(os_fd, fil, 1024);
+  write(os_fd, inode_list, 1024*4);
+  write(os_fd, root, 1024);
 }
 
 int initial_load()
 {
-  ListaInode_T Lista_inode[4][16] = {{{0}}, {{1024, 'D', 0, 0, 0, "rwxrwx", {8}}}};
-  dir raiz[64] = {{2, "."}, {2, ".."}};
-  dir raiz_temp[64] = {{0, "."}, {0, ".."}};
+  inode_list_t inode_list[4][16] = {{{0}}, {{1024, 'D', 0, 0, 0, "rwxrwx", {8}}}};
+  dir root[64] = {{2, "."}, {2, ".."}};
+  dir root_tmp[64] = {{0, "."}, {0, ".."}};
   int boot[1024] = {0};
-  int lbl[256] = {9,10,11};
-  int lil[16] = {3,4,5};
-  int lil_tope = 0;
-  int lbl_tope = 0;
+  int fbl[256] = {9,10,11};
+  int fil[16] = {3,4,5};
+  int fil_max = 0;
+  int fbl_max = 0;
 }
 
 int load_from_disk()
@@ -54,6 +54,7 @@ void print_menu()
   printf("\nSeleccione una de las siguientes opciones:\n");
   printf("1) Crear archivo\n");
   printf("2) Crear directorio\n");
+  printf("3) Salir de sistema\n");
   printf("\n\n");
 }
 void clean_os_image()
@@ -67,3 +68,23 @@ void clean_os_image()
 
   lseek(os_fd, 0, SEEK_SET);
 }
+
+// INICIA - Funciones principales de MENU
+int create_directory()
+{
+
+}
+
+int create_regular_file()
+{
+  //
+}
+// TERMINA - Funciones de MENU
+
+
+// INICIA - Algoritmos para manipular archivos
+int iget()
+{
+
+}
+// TERMINA - Algoritmos "  "

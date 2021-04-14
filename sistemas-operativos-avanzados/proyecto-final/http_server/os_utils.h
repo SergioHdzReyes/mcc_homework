@@ -10,37 +10,38 @@
 #include <string.h>
 
 #define OS_FILENAME "os_image"
+#define MAX_FILENAME_SIZE 12
 
 // Estructura de inodo
 typedef struct inode {
-  int tamano;
-  char tipo;
+  int size;
+  char type;
   char owner;
-  int fecha;
-  int Dummy;
-  char permisos[6];
-  int tabla_contenido[11];
-} ListaInode_T;
+  int date;
+  int dummy;
+  char permissions[6];
+  int content_table[11];
+} inode_list_t;
 
 // Estructura de directorio
-typedef struct directorio {
+typedef struct directory {
   int inode;
-  char nombre[12];
+  char nombre[MAX_FILENAME_SIZE];
 } dir;
 
 // Descriptor de arhivo para SO
 int os_fd;
 
 // Elementos principales
-dir raiz_temp[64];
+dir root_tmp[64];
 char boot[1024];
-int lbl[256];
-int lil[16];
-ListaInode_T Lista_inode[4][16];
-dir raiz[64];
-int lil_tope;
-int lbl_tope;
-char dir_nombre[12];
+int fbl[256];
+int fil[16];
+inode_list_t inode_list[4][16];
+dir root[64];
+int fil_max;
+int fbl_max;
+char dir_nombre[MAX_FILENAME_SIZE];
 
 // Se intenta abrir archivo de imagen
 int os_open_image();
@@ -62,5 +63,15 @@ void print_menu();
 
 // Se limpia imagen de SO
 void clean_os_image();
+
+// Crea un directorio
+int create_directory();
+
+// Crea un archivo regular
+int create_regular_file();
+
+// INICIAN - Algoritmos
+int iget();
+// TERMINA - Algoritmos
 
 #endif

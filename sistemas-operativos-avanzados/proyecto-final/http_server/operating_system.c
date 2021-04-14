@@ -16,9 +16,11 @@ nuestro sistema tendra 1MB de informacion.
 
 int main()
 {
+  int opc;
   load_system();
 
-  int opc;
+  char command[100], end = 0;
+
   while (1) {
     // Remover y correr servidor en lugar de este menu
     print_menu();
@@ -26,8 +28,18 @@ int main()
 
     switch (opc) {
     case 1:
+      create_directory();
       break;
     case 2:
+      create_regular_file();
+      break;
+    case 3:
+      save_to_disk();
+      end = 1;
+      break;
+    }
+
+    if (end) {
       break;
     }
   }
