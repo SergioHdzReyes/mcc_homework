@@ -17,6 +17,7 @@ nuestro sistema tendra 1MB de informacion.
 int main()
 {
   int opc;
+  char name[12];
   load_system();
 
   char command[100], end = 0;
@@ -28,12 +29,17 @@ int main()
 
     switch (opc) {
     case 1:
-      create_directory();
+      printf("Escribe el nombre del archivo: ");
+      scanf("%s", name);
+      create_directory(name);
       break;
     case 2:
       create_regular_file();
       break;
     case 3:
+      show_files_list();
+      break;
+    case 9:
       save_to_disk();
       end = 1;
       break;
