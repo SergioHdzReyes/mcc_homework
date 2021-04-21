@@ -32,15 +32,6 @@ typedef struct directory {
 
 int os_fd;
 
-/* dir root_tmp[64]; */
-/* char boot[1024]; */
-/* int fbl[256]; */
-/* int fil[16]; */
-/* inode_list_t inode_list[4][16]; */
-/* dir root[64]; */
-/* int fil_max; */
-/* int fbl_max; */
-
 // Se intenta abrir archivo de imagen
 int os_open_image();
 

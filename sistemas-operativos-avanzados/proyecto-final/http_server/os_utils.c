@@ -1,7 +1,5 @@
 #include "os_utils.h"
 
-
-
 // Elementos principales
 inode_list_t inode_list[16][4] = {{{0}}, {{1024, 'D', 0, 0, 0, "rwxrwx", {8}}}};
 dir root[64] = {{2, "."}, {2, ".."}};
@@ -24,6 +22,8 @@ int os_open_image()
     printf("Imposible crear archivo, verifique permisos de escritura.\n");
     exit(3);
   }
+
+  return 0;
 }
 
 int load_system()
@@ -39,6 +39,8 @@ int load_system()
     os_open_image();
     load_from_disk();
   }
+
+  return 0;
 }
 
 int save_to_disk()
@@ -48,6 +50,8 @@ int save_to_disk()
   write(os_fd, fil, 1024);
   write(os_fd, inode_list, 1024*4);
   write(os_fd, root, 1024);
+
+  return 0;
 }
 
 int initial_load()
@@ -61,11 +65,13 @@ int initial_load()
   /* int fil[16] = {3,4,5,6,7,8,9,10}; */
   /* int fil_max = 0; //tope */
   /* int fbl_max = 0; //tope */
+
+  return 0;
 }
 
 int load_from_disk()
 {
-
+  return 0;
 }
 
 void print_menu()
@@ -77,6 +83,7 @@ void print_menu()
   printf("9) Salir de sistema\n");
   printf("\n\n");
 }
+
 void clean_os_image()
 {
   int reset[1024] = {0};
@@ -94,9 +101,9 @@ int create_directory(char *name)
 {
   int c, f;
   for (int count = 2; count < 62; count++) {
-    if (root[count].inode  == 0) {
+    if (root[count].inode  == 0) { // Primer espacio para inodo
       strcpy(root[count].nombre, name);
-      root[count].inode = fil[fil_max];
+      root[count].inode = fil[fil_max]; // siguiente inodo disponible
       fil_max++;
 
       // utilizar el directorio actual, modificar
@@ -115,6 +122,8 @@ int create_directory(char *name)
       break;
     }
   }
+
+  return 0;
 }
 
 void show_files_list()
@@ -128,7 +137,7 @@ void show_files_list()
 
 int create_regular_file()
 {
-
+  return 0;
 }
 // TERMINA - Funciones de MENU
 
@@ -136,6 +145,6 @@ int create_regular_file()
 // INICIA - Algoritmos para manipular archivos
 int iget()
 {
-
+  return 0;
 }
 // TERMINA - Algoritmos "  "
