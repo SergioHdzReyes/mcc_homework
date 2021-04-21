@@ -96,7 +96,7 @@ void clean_os_image()
   lseek(os_fd, 0, SEEK_SET);
 }
 
-// INICIA - Funciones principales de MENU
+// INICIA - FUNCIONES DE COMANDOS
 int create_directory(char *name)
 {
   int c, f;
@@ -139,12 +139,62 @@ int create_regular_file()
 {
   return 0;
 }
-// TERMINA - Funciones de MENU
 
-
-// INICIA - Algoritmos para manipular archivos
-int iget()
+int install()
 {
+  printf("INSTALL\n");
+  
   return 0;
 }
-// TERMINA - Algoritmos "  "
+// TERMINA - FUNCIONES DE COMANDOS
+
+
+// INICIA - PARAMETROS
+int process_params(int argc, char **argv)
+{
+  int c;
+
+  while (1) {
+    static struct option long_options[] = {
+      {"install", no_argument,       0, 'i'},
+      {"port",    required_argument,       0, 'p'},
+    };
+      
+    int option_index = 0;
+
+    c = getopt_long (argc, argv, "ip",
+		     long_options, &option_index);
+
+    // Se detecta final de las opciones.
+    if (c == -1)
+      break;
+
+    switch (c) {
+    case 0:
+      /* If this option set a flag, do nothing else now. */
+      if (long_options[option_index].flag != 0)
+	break;
+      printf ("option %s", long_options[option_index].name);
+      if (optarg)
+	printf (" with arg %s", optarg);
+      printf ("\n");
+      break;
+	
+    case 'i':
+      install();
+      break;
+    case 'p':
+      printf("PUERTO: \n");
+      break;
+    case '?':
+      /* getopt_long already printed an error message. */
+      break;	
+    default:
+      abort ();
+    }
+  }
+  
+  return 0;
+}
+
+// TERMINA - PARAMETROS

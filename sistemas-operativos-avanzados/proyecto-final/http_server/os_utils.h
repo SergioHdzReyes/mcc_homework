@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 
 #define OS_FILENAME "os_image"
 #define MAX_FILENAME_SIZE 12
@@ -53,6 +54,8 @@ void print_menu();
 // Se limpia imagen de SO
 void clean_os_image();
 
+
+// INICIA - FUNCIONES DE COMANDOS
 // Crea un directorio
 int create_directory();
 
@@ -62,8 +65,17 @@ void show_files_list();
 // Crea un archivo regular
 int create_regular_file();
 
+// Instala el sistema operativo
+int install();
+// TERMINA - FUNCIONES DE COMANDOS
+
+
 // INICIAN - Algoritmos
 int iget();
 // TERMINA - Algoritmos
+
+// INICIA - PARAMETROS
+int process_params(int argc, char **argv);
+// TERMINA - PARAMETROS
 
 #endif

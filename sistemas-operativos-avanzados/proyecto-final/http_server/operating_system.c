@@ -14,13 +14,14 @@ nuestro sistema tendra 1MB de informacion.
 
 #include "os_utils.h"
 
-int main()
+int main(int argc, char **argv)
 {
-  int opc;
+  int opc, end = 0;
   char name[12];
-  load_system();
 
-  char command[100], end = 0;
+  process_params(argc, argv);
+
+  load_system();
 
   while (1) {
     // Remover y correr servidor en lugar de este menu
