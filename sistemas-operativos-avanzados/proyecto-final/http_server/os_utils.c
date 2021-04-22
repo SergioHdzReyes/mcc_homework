@@ -34,7 +34,6 @@ int load_system()
   if ((tmp_fd = open(OS_FILENAME, O_RDONLY)) < 0) {
     os_open_image();
     clean_os_image();
-    initial_load();
   } else {
     close(tmp_fd);
     os_open_image();
@@ -51,21 +50,6 @@ int save_to_disk()
   write(os_fd, fil, 1024);
   write(os_fd, inode_list, 1024*4);
   write(os_fd, root, 1024);
-
-  return 0;
-}
-
-int initial_load()
-{
-  /* inode_list_t inode_list[4][16] = {{{0}}, {{1024, 'D', 0, 0, 0, "rwxrwx", {8}}}}; */
-  /* dir root[64] = {{2, "."}, {2, ".."}}; */
-  /* dir root_tmp[64] = {{0, "."}, {0, ".."}}; */
-  /* int boot[1024] = {0}; */
-  /* // TODO rellenar */
-  /* int fbl[256] = {9,10,11,12,13,14,15}; */
-  /* int fil[16] = {3,4,5,6,7,8,9,10}; */
-  /* int fil_max = 0; //tope */
-  /* int fbl_max = 0; //tope */
 
   return 0;
 }
@@ -150,8 +134,32 @@ void show_files_list()
   }
 }
 
-int create_regular_file()
+int create_regular_file(char *name)
 {
+  int c, f;
+  for (int count = 2; count < 62; count++) {
+    if (root[count].inode  == 0) { // Primer espacio para inodo
+      strcpy(root[count].nombre, name);
+      root[count].inode = fil[fil_max]; // siguiente inodo disponible
+      fil_max++;
+
+      // utilizar el directorio actual, modificar
+      root_tmp[0].inode = root[count].inode;
+      root_tmp[1].inode = root[0].inode;
+      c = root[count].inode / 16;
+      f = (root[count].inode % 16 - 1)*64;
+
+      inode_list[f][c].type = '-';
+      inode_list[f][c].size = 1024;
+      inode_list[f][c].date = 170421;
+
+      inode_list[f][c].content_table[0] = fbl[fbl_max];
+      fbl_max++;
+      memcpy(blocks[inode_list[f][c].content_table[0]] - 9, root_tmp, 1024);
+      break;
+    }
+  }
+  
   return 0;
 }
 

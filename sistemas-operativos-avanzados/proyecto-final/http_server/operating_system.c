@@ -19,9 +19,8 @@ int main(int argc, char **argv)
   int opc, end = 0;
   char name[12];
 
+  os_open_image();
   process_params(argc, argv);
-
-  load_system();
 
   while (1) {
     // Remover y correr servidor en lugar de este menu
@@ -30,12 +29,14 @@ int main(int argc, char **argv)
 
     switch (opc) {
     case 1:
-      printf("Escribe el nombre del archivo: ");
+      printf("Escribe el nombre del directorio: ");
       scanf("%s", name);
       create_directory(name);
       break;
     case 2:
-      create_regular_file();
+      printf("Escribe el nombre del archivo: ");
+      scanf("%s", name);
+      create_regular_file(name);
       break;
     case 3:
       show_files_list();

@@ -45,9 +45,6 @@ int load_from_disk();
 // Guarda datos del Sistema Operativo a disco
 int save_to_disk();
 
-// Valores por default al arrancar por primera vez el SO
-int initial_load();
-
 // Menu para probar sistema
 void print_menu();
 
@@ -60,13 +57,13 @@ int set_os_status();
 
 // INICIA - FUNCIONES DE COMANDOS
 // Crea un directorio
-int create_directory();
+int create_directory(char *name);
 
 // Mostrar archivos
 void show_files_list();
 
 // Crea un archivo regular
-int create_regular_file();
+int create_regular_file(char *name);
 
 // Instala el sistema operativo
 int install();
