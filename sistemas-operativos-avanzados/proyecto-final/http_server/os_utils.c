@@ -12,8 +12,9 @@ int fil_max = 0; //tope
 int fbl_max = 0; //tope
 
 char dir_nombre[MAX_FILENAME_SIZE];
-
 char blocks[50][1024] = {'\0'};
+// Estatus del sistema, 0 no instalado, 1 instalado
+int OS_STATUS = 0;
 
 
 int os_open_image()
@@ -96,6 +97,20 @@ void clean_os_image()
   lseek(os_fd, 0, SEEK_SET);
 }
 
+int set_os_status()
+{
+  int tmp_fd;
+
+  if ((tmp_fd = open(OS_FILENAME, O_RDONLY)) < 0) {
+    OS_STATUS = 0;
+  } else {
+    close(tmp_fd);
+    OS_STATUS = 1;
+  }
+  
+  return 0;
+}
+
 // INICIA - FUNCIONES DE COMANDOS
 int create_directory(char *name)
 {
@@ -142,7 +157,25 @@ int create_regular_file()
 
 int install()
 {
-  printf("INSTALL\n");
+  char opc;
+  
+  if (OS_STATUS) {
+    printf("El sistema operativo ya se encuentra instalado.\nDesea formatearlo? (s/n):");
+    scanf("%c", &opc);
+
+    if (opc != 's') {
+      return 0;
+    }
+  }
+
+  // Se guarda informacion actual del sistema a disco
+  save_to_disk();
+
+  if (OS_STATUS)
+    printf("\nSe formateo correctamente el sistema.\n");
+  else
+    printf("\nSe instalo correctamente el sistema.\n");
+  getchar();
   
   return 0;
 }
@@ -153,6 +186,7 @@ int install()
 int process_params(int argc, char **argv)
 {
   int c;
+  set_os_status();
 
   while (1) {
     static struct option long_options[] = {

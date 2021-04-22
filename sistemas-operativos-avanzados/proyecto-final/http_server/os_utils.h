@@ -30,8 +30,8 @@ typedef struct directory {
   char nombre[MAX_FILENAME_SIZE];
 } dir;
 
-
 int os_fd;
+
 
 // Se intenta abrir archivo de imagen
 int os_open_image();
@@ -53,6 +53,9 @@ void print_menu();
 
 // Se limpia imagen de SO
 void clean_os_image();
+
+// Se establece estatus del sistema
+int set_os_status();
 
 
 // INICIA - FUNCIONES DE COMANDOS
