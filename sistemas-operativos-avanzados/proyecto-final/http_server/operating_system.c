@@ -17,7 +17,7 @@ nuestro sistema tendra 1MB de informacion.
 int main(int argc, char **argv)
 {
   int opc, end = 0;
-  char name[12];
+  char name[12]; //No puede pasar de 12 porque ese es el tamaño que tenemos para el nombre en el directorio. 
 
   os_open_image();
   process_params(argc, argv);
