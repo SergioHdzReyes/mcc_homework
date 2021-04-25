@@ -102,15 +102,24 @@ void stop_server()
 
   sscanf(pid_str, "%d", &pid);
 
+  close(pid_fd);
   kill(pid, SIGKILL);
   printf("\nDeteniendo servidor...\n\n");
+
+  // TODO Utilizar el remove del signal_handler
+  remove(PID_PATH);
+  
   exit(0);
 }
 
 void signal_handler(int sig_num)
 {
   if (sig_num == SIGKILL) {
-    printf("\nDeteniendo servidor...\n\n");
+    printf("\nDeteniendo servidor...\n\n%s", PID_PATH);
+    
+    if (remove(PID_PATH) != 0) {
+      printf("No fue posible detener el servidor. Debe ser usuario root.\n");
+    }
     exit(0);
   }
 }
@@ -133,6 +142,7 @@ int save_process_info()
   pid = getpid();
   sprintf(pid_str, "%d", pid);
   write(pid_fd, pid_str, sizeof(pid_str));
+  close(pid_fd);
 
   return 0;
 }
@@ -160,10 +170,10 @@ int set_daemon_process()
   umask(0);
 
   // Se configura nueva sesion
-  sid = setsid();
-  if(sid < 0) {
-    exit(1);  // Fallo
-  }
+  /* sid = setsid(); */
+  /* if(sid < 0) { */
+  /*   exit(1);  // Fallo */
+  /* } */
   
   /* close(STDIN_FILENO); */
   /* close(STDOUT_FILENO); */

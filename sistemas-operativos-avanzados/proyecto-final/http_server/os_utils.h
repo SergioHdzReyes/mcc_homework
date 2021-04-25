@@ -66,7 +66,7 @@ void show_files_list();
 int create_regular_file(char *name);
 
 // Instala el sistema operativo
-int install();
+void install();
 // TERMINA - FUNCIONES DE COMANDOS
 
 

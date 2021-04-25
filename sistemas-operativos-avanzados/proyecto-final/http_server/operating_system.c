@@ -13,13 +13,23 @@ nuestro sistema tendra 1MB de informacion.
 *******************************************************************************************************************************************************************************/
 
 #include "os_utils.h"
-#include "server_utils.h"
 
 int main(int argc, char **argv)
-{ 
+{
+  int pid_fd;
   system("clear");
-  process_params(argc, argv);
   set_signals();
+  process_params(argc, argv);
+
+  
+  
+  if ((pid_fd = open(PID_PATH, O_RDONLY)) > 0) {
+    printf("El servidor ya esta ejecutandose.\nSaliendo...\n");
+    close(pid_fd);
+    exit(0);
+  }
+
+  
   set_daemon_process();
 
   struct sockaddr_in clientaddr;
