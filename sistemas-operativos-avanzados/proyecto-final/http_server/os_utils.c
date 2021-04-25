@@ -200,6 +200,8 @@ int process_params(int argc, char **argv)
     static struct option long_options[] = {
       {"install", no_argument,       0, 'i'},
       {"port",    required_argument,       0, 'p'},
+      {"start",    required_argument,       0, 's'},
+      {"stop",    no_argument,       0, 'x'},
     };
       
     int option_index = 0;
@@ -227,6 +229,9 @@ int process_params(int argc, char **argv)
       break;
     case 'p':
       printf("PUERTO: \n");
+      break;
+    case 'x':
+      stop_server();
       break;
     case '?':
       /* getopt_long already printed an error message. */

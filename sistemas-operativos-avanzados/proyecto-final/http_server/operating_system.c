@@ -13,43 +13,47 @@ nuestro sistema tendra 1MB de informacion.
 *******************************************************************************************************************************************************************************/
 
 #include "os_utils.h"
+#include "server_utils.h"
 
 int main(int argc, char **argv)
-{
-  int opc, end = 0;
-  char name[12];
-
-  os_open_image();
+{ 
+  system("clear");
   process_params(argc, argv);
+  set_signals();
+  set_daemon_process();
 
+  struct sockaddr_in clientaddr;
+  socklen_t addrlen;
+  int slot = 0;
+
+  // Se ponen los clientes como -1, significa no hay conectados
+  int i;
+  for (i=0; i<CONNMAX; i++) {
+    clients[i]=-1;
+  }
+
+  startServer(PORT);
+  printf("Servidor iniciado en el puerto %s%s%s\n", "\033[92m", PORT,"\033[0m");
+
+  // Se queda en ciclo esperando conexiones
   while (1) {
-    // Remover y correr servidor en lugar de este menu
-    print_menu();
-    scanf("%d", &opc);
+    addrlen = sizeof(clientaddr);
+    clients[slot] = accept (listenfd, (struct sockaddr *) &clientaddr, &addrlen);
 
-    switch (opc) {
-    case 1:
-      printf("Escribe el nombre del directorio: ");
-      scanf("%s", name);
-      create_directory(name);
-      break;
-    case 2:
-      printf("Escribe el nombre del archivo: ");
-      scanf("%s", name);
-      create_regular_file(name);
-      break;
-    case 3:
-      show_files_list();
-      break;
-    case 9:
-      save_to_disk();
-      end = 1;
-      break;
+    if (clients[slot]<0) {
+      error ("accept() error");
+    } else {
+      if ( fork()==0 ) {
+        respond(slot);
+        exit(0);
+      }
     }
 
-    if (end) {
-      break;
+    while (clients[slot]!=-1) {
+      slot = (slot+1)%CONNMAX;
     }
+
+    printf("\nSiguiente peticion...\n\n");
   }
 
   close(os_fd);

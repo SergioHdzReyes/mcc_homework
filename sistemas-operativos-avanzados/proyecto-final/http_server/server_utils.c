@@ -1,4 +1,4 @@
-#include "server_utils.h"
+#include "os_utils.h"
 
 // Se inicia servidor
 void startServer(char *port)
@@ -34,6 +34,8 @@ void startServer(char *port)
     perror("listen() error");
     exit(1);
   }
+
+  save_process_info();
 }
 
 // Se procesa respuesta a cliente
@@ -60,22 +62,22 @@ void respond(int n)
         if ( strncmp( reqline[2], "HTTP/1.0", 8)!=0 && strncmp( reqline[2], "HTTP/1.1", 8)!=0 ) {
           write(clients[n], "HTTP/1.0 400 Bad Request\n", 25);
         } else {
-	      if ( strncmp(reqline[1], "/\0", 2)==0 )
-            reqline[1] = "/index.html";        // Se busca archivo index.html por default
-
-	      strcpy(path, ROOT);
-	      strcpy(&path[strlen(ROOT)], reqline[1]);
-	      printf("file: %s\n", path);
+	  if ( strncmp(reqline[1], "/\0", 2)==0 )
+	    reqline[1] = "/../index.html";        // Se busca archivo index.html por default
+	      
+	  strcpy(path, ROOT);
+	  strcpy(&path[strlen(ROOT)], reqline[1]);
+	  printf("file: %s\n", path);
 
           // Archivo encontrado
-	      if ( (fd=open(path, O_RDONLY))!=-1 ) {
+	  if ( (fd=open(path, O_RDONLY))!=-1 ) {
             send(clients[n], "HTTP/1.0 200 OK\n\n", 17, 0);
             while ( (bytes_read=read(fd, data_to_send, BYTES))>0 )
               write (clients[n], data_to_send, bytes_read);
           } else {
             write(clients[n], "HTTP/1.0 404 Not Found\n", 23); // Archivo no encontrado
           }
-	    }
+	}
       }
     }
 
@@ -83,4 +85,89 @@ void respond(int n)
   shutdown (clients[n], SHUT_RDWR);
   close(clients[n]);
   clients[n]=-1;
+}
+
+void stop_server()
+{
+  int pid_fd, pid;
+  char pid_str[10];
+  
+  if ((pid_fd = open(PID_PATH, O_RDONLY)) < 0) {
+    printf("Imposible leer archivo pid, verifique permisos de lectura.\n");
+    exit(3);
+  }
+
+  read(pid_fd, pid_str, 10);
+  printf("PID: %s", pid_str);
+
+  sscanf(pid_str, "%d", &pid);
+
+  kill(pid, SIGKILL);
+  printf("\nDeteniendo servidor...\n\n");
+  exit(0);
+}
+
+void signal_handler(int sig_num)
+{
+  if (sig_num == SIGKILL) {
+    printf("\nDeteniendo servidor...\n\n");
+    exit(0);
+  }
+}
+
+void set_signals()
+{
+  signal(SIGKILL, signal_handler);
+}
+
+int save_process_info()
+{
+  int pid_fd, pid;
+  char pid_str[10];
+  
+  if ((pid_fd = open(PID_PATH, O_RDWR|O_CREAT, 0644)) < 0) {
+    printf("Imposible crear archivo de proceso, verifique permisos de escritura.\n");
+    exit(3);
+  }
+
+  pid = getpid();
+  sprintf(pid_str, "%d", pid);
+  write(pid_fd, pid_str, sizeof(pid_str));
+
+  return 0;
+}
+
+int set_daemon_process()
+{
+  pid_t process_id = 0;
+  pid_t sid = 0;
+
+  // Se crea proceso hijo
+  process_id = fork();
+  // Indica que fork() fallo
+  if (process_id < 0) {
+    printf("No se pudo crear el proceso hijo!\n");
+    exit(1);
+  }
+
+  // Proceso padre necesita matarse
+  if (process_id > 0) {
+    printf("process_id de proceso hijo %d \n", process_id);
+    exit(0);
+  }
+
+  //unmask the file mode
+  umask(0);
+
+  // Se configura nueva sesion
+  sid = setsid();
+  if(sid < 0) {
+    exit(1);  // Fallo
+  }
+  
+  /* close(STDIN_FILENO); */
+  /* close(STDOUT_FILENO); */
+  /* close(STDERR_FILENO); */
+  
+  return 0;
 }
