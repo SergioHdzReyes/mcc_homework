@@ -15,7 +15,7 @@ $(document).ready(function() {
 	    if (userInput.val() == 'clear') {
 		history.empty();
 	    } else {
-		send_command();
+		send_command($(this).val());
 	    }
 
 	    // Se resetea comando de usuario
@@ -24,31 +24,24 @@ $(document).ready(function() {
     });
 });
 
-function send_command()
+function send_command(command)
 {
     let serverResponse = '';
 
     $.ajax({
-        type: 'POST',
-        url: 'https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY',
-        data: {},
-	dataType: 'json',
+        type: 'put',
+	url: 'http://localhost/commands',
+	data: {command: command},
+	dataType: 'jsonp',
+	jsonp: 'callback_shr',
         success: function (response) {
-	    console.log('RESPUESTA-GOOGLE:');
-	    console.log(response);
-            if (response) {
-		
-            } else {
-		
-            }
-	    serverResponse = 'Respuesta de servidor';
+	    console.log('success');
         },
         error: function (error) {
-	    console.log(error);
-            alert('Ocurrio un error al procesar la informacion.');
+	    console.log('error');
         },
-        complete: function () {
-            console.log('Solicitud completa');
+        complete: function (resp) {
+	    console.log('complete');
         }
     });
 
@@ -61,4 +54,10 @@ function send_command()
 	    $('<p/>', {text: serverResponse}),
 	)
     );
+}
+
+function callback_shr(param)
+{
+    console.log('callback_shr');
+    console.log(param);
 }

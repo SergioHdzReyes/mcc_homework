@@ -193,7 +193,7 @@ int create_regular_file(char *name)
   return 0;
 }
 
-int install()
+void install()
 {
   char opc;
   
@@ -202,9 +202,10 @@ int install()
     scanf("%c", &opc);
 
     if (opc != 's') {
-      return 0;
+      exit(0);
     }
   }
+  os_open_image();
 
   // Se guarda informacion actual del sistema a disco
   save_to_disk();
@@ -214,8 +215,8 @@ int install()
   else
     printf("\nSe instalo correctamente el sistema.\n");
   getchar();
-  
-  return 0;
+
+  exit(0);
 }
 // TERMINA - FUNCIONES DE COMANDOS
 
@@ -226,10 +227,16 @@ int process_params(int argc, char **argv)
   int c;
   set_os_status();
 
+  if (argc == 1) {
+    printf("Ingrese una opcion valida;\n");
+    exit(0);
+  }
+
   while (1) {
     static struct option long_options[] = {
       {"install", no_argument,       0, 'i'},
-      {"port",    required_argument,       0, 'p'},
+      {"start",   no_argument,       0, 's'},
+      {"stop",    no_argument,       0, 'x'},
     };
       
     int option_index = 0;
@@ -255,8 +262,10 @@ int process_params(int argc, char **argv)
     case 'i':
       install();
       break;
-    case 'p':
-      printf("PUERTO: \n");
+    case 's':
+      break;
+    case 'x':
+      stop_server();
       break;
     case '?':
       /* getopt_long already printed an error message. */

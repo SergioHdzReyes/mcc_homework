@@ -66,7 +66,7 @@ void show_files_list();
 int create_regular_file(char *name);
 
 // Instala el sistema operativo
-int install();
+void install();
 // TERMINA - FUNCIONES DE COMANDOS
 
 
@@ -77,5 +77,50 @@ int iget();
 // INICIA - PARAMETROS
 int process_params(int argc, char **argv);
 // TERMINA - PARAMETROS
+
+
+
+
+// UTILERIAS PARA SERVIDOR
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <signal.h>
+
+
+#define CONNMAX 1000
+#define BYTES 1024
+#define PORT "80"
+#define ROOT getenv("PWD")
+#define PID_PATH "/var/run/os_mcc.pid"
+
+int listenfd, clients[CONNMAX];
+
+void error(char *);
+
+// Inicia el servidor
+void startServer(char *port);
+
+// Se procesa peticion de cliente
+void process_request(int n);
+
+// Se procesa la ruta solicitada para seleccionar comando correspondiente
+void process_route(char *route);
+
+// Se detiene el servidor que corre en background por medio de señales
+void stop_server();
+
+// Administrador de señales
+void signal_handler(int num_sig);
+
+// Se dan de alta señales para nuestro servidor
+void set_signals();
+
+// Se guarda pid de servidor en archivo temporal
+int save_process_info();
+
+// Funcion para convertir el proceso a demonio, corriendo en background
+int set_daemon_process();
 
 #endif
