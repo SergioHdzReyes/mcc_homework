@@ -20,15 +20,12 @@ int main(int argc, char **argv)
   system("clear");
   set_signals();
   process_params(argc, argv);
-
-  
   
   if ((pid_fd = open(PID_PATH, O_RDONLY)) > 0) {
     printf("El servidor ya esta ejecutandose.\nSaliendo...\n");
     close(pid_fd);
     exit(0);
   }
-
   
   set_daemon_process();
 
@@ -54,7 +51,8 @@ int main(int argc, char **argv)
       error ("accept() error");
     } else {
       if ( fork()==0 ) {
-        respond(slot);
+	process_request(slot);
+	printf("Termina procesar peticion\n");
         exit(0);
       }
     }
@@ -62,8 +60,6 @@ int main(int argc, char **argv)
     while (clients[slot]!=-1) {
       slot = (slot+1)%CONNMAX;
     }
-
-    printf("\nSiguiente peticion...\n\n");
   }
 
   close(os_fd);

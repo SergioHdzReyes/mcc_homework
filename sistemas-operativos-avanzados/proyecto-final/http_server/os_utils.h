@@ -102,8 +102,11 @@ void error(char *);
 // Inicia el servidor
 void startServer(char *port);
 
-// Respuesta a cliente
-void respond(int n);
+// Se procesa peticion de cliente
+void process_request(int n);
+
+// Se procesa la ruta solicitada para seleccionar comando correspondiente
+void process_route(char *route);
 
 // Se detiene el servidor que corre en background por medio de señales
 void stop_server();

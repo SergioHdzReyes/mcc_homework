@@ -38,53 +38,88 @@ void startServer(char *port)
   save_process_info();
 }
 
-// Se procesa respuesta a cliente
-void respond(int n)
+// Se procesa solicitud
+void process_request(int n)
 {
-  char mesg[99999], *reqline[3], data_to_send[BYTES], path[99999];
-  int rcvd, fd, bytes_read;
+  char mesg[99999], *reqline[3];
+  int rcvd, success = 0;
 
   memset( (void*)mesg, (int)'\0', 99999 );
+  rcvd = recv(clients[n], mesg, 99999, 0);
 
-  rcvd=recv(clients[n], mesg, 99999, 0);
-
-  if (rcvd<0)    // receive error
+  if (rcvd < 0) {    // receive error
     fprintf(stderr,("recv() error\n"));
-  else if (rcvd==0)    // receive socket closed
-    fprintf(stderr,"Cliente desconectado repentinamente.\n");
-  else    // message received
-    {
-      printf("%s", mesg);
-      reqline[0] = strtok (mesg, " \t\n");
-      if ( strncmp(reqline[0], "GET\0", 4)==0 ) {
-        reqline[1] = strtok (NULL, " \t");
-        reqline[2] = strtok (NULL, " \t\n");
-        if ( strncmp( reqline[2], "HTTP/1.0", 8)!=0 && strncmp( reqline[2], "HTTP/1.1", 8)!=0 ) {
-          write(clients[n], "HTTP/1.0 400 Bad Request\n", 25);
-        } else {
-	  if ( strncmp(reqline[1], "/\0", 2)==0 )
-	    reqline[1] = "/../index.html";        // Se busca archivo index.html por default
-	      
-	  strcpy(path, ROOT);
-	  strcpy(&path[strlen(ROOT)], reqline[1]);
-	  printf("file: %s\n", path);
+  } else if (rcvd == 0) {   // receive socket closed
+    fprintf(stderr, "Cliente desconectado repentinamente.\n");
+  } else {    // message received
+    printf("%s", mesg);
+    reqline[0] = strtok (mesg, " \t\n");
+    
+    if ( strncmp(reqline[0], "GET\0", 4) == 0 ) {
+      reqline[1] = strtok (NULL, " \t");
+      reqline[2] = strtok (NULL, " \t\n");
+      
+      if ((strncmp( reqline[2], "HTTP/1.0", 8) == 0) || (strncmp( reqline[2], "HTTP/1.1", 8) == 0)) {
+	if ( strncmp(reqline[1], "/\0", 2)==0 ) {
+	  printf("Ingrese una ruta valida\n");
+	} else {
+	  success = 1;
 
-          // Archivo encontrado
-	  if ( (fd=open(path, O_RDONLY))!=-1 ) {
-            send(clients[n], "HTTP/1.0 200 OK\n\n", 17, 0);
-            while ( (bytes_read=read(fd, data_to_send, BYTES))>0 )
-              write (clients[n], data_to_send, bytes_read);
-          } else {
-            write(clients[n], "HTTP/1.0 404 Not Found\n", 23); // Archivo no encontrado
-          }
+	  reqline[1] = strtok(reqline[1], "/");
+	  // Se procesa ruta ingresada
+	  process_route(reqline[1]);
 	}
       }
     }
+  }
+
+  if (success) {
+    char *reply = 
+      "HTTP/2 200 OK\n"
+      //"Date: Thu, 25 Apr 2021 23:47:04 GMT\n"
+      //"Server: Apache/2.2.3\n"
+      //"Last-Modified: Wed, 18 Jun 2003 16:05:58 GMT\n"
+      "Content-Type: application/json; charset=UTF-8\n"
+      "Content-Length: 33\n"
+      "Access-Control-Allow-Origin: *\n"
+      "Connection: close\n"
+      "\n"
+      "callback_shr({\"response\": false})";
+    send(clients[n], reply, strlen(reply), 0);
+  } else {
+    write(clients[n], "HTTP/1.0 400 Bad Request\n", 25);
+  }
 
   // Se cierra Socket
   shutdown (clients[n], SHUT_RDWR);
   close(clients[n]);
   clients[n]=-1;
+}
+
+void process_route(char *route)
+{
+  int opc = -1;
+  char *commands[10] = {"mkdir", "ls"};
+  char command[50], params[100];  
+  printf("Procesando ruta: %s\n", route);
+
+  strcpy(command, strtok(route, "?"));
+  strcpy(params, strtok(NULL, "\r\n"));
+  printf("COMMAND: %s\n", command);
+  printf("PARAMS: %s\n", params);
+  
+  for (int i = 0; i < 10; i++)
+    if (commands[i] == command)
+      opc = i;
+
+  if (opc >= 0) {
+    switch(opc) {
+    case 0:
+      create_directory(params);
+      break;
+    }
+  }
+  printf("Termino process_route\n");
 }
 
 void stop_server()
@@ -174,10 +209,6 @@ int set_daemon_process()
   /* if(sid < 0) { */
   /*   exit(1);  // Fallo */
   /* } */
-  
-  /* close(STDIN_FILENO); */
-  /* close(STDOUT_FILENO); */
-  /* close(STDERR_FILENO); */
   
   return 0;
 }
