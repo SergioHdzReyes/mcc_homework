@@ -1,5 +1,17 @@
 #include "os_utils.h"
 
+//char *route;
+
+typedef struct {
+  char *key;
+  char *value;
+} param_t;
+
+struct {
+  param_t list[50];
+  int count;
+} params_list;
+
 // Se inicia servidor
 void startServer(char *port)
 {
@@ -43,6 +55,7 @@ void process_request(int n)
 {
   char mesg[99999], *reqline[3];
   int rcvd, success = 0;
+  params_list.count = 0;
 
   memset( (void*)mesg, (int)'\0', 99999 );
   rcvd = recv(clients[n], mesg, 99999, 0);
@@ -68,6 +81,9 @@ void process_request(int n)
 	  reqline[1] = strtok(reqline[1], "/");
 	  // Se procesa ruta ingresada
 	  process_route(reqline[1]);
+
+	  // Se ejecuta comando correspondiente
+	  process_command();
 	}
       }
     }
@@ -96,30 +112,57 @@ void process_request(int n)
   clients[n]=-1;
 }
 
-void process_route(char *route)
+void process_route(char *full_route)
 {
-  int opc = -1;
-  char *commands[10] = {"mkdir", "ls"};
-  char command[50], params[100];  
-  printf("Procesando ruta: %s\n", route);
+  int params_count = 1;
+  char params[500], *token, route[100];
+  printf("Procesando ruta: %s\n", full_route);
 
-  strcpy(command, strtok(route, "?"));
+  memset( (void*)route, (int)'\0', 100 );
+
+  strcpy(route, strtok(full_route, "?"));
   strcpy(params, strtok(NULL, "\r\n"));
-  printf("COMMAND: %s\n", command);
-  printf("PARAMS: %s\n", params);
-  
-  for (int i = 0; i < 10; i++)
-    if (commands[i] == command)
-      opc = i;
 
-  if (opc >= 0) {
-    switch(opc) {
-    case 0:
-      create_directory(params);
-      break;
+  token = strtok(params, "&=");
+
+  while (token != NULL) {
+    if ((params_count % 2) == 0) {
+      params_list.list[params_list.count].value = token;
+      params_list.count++;
+    } else {
+      params_list.list[params_list.count].key = token;
+    }
+
+    token = strtok(NULL, "&=");
+    params_count++;
+  }
+}
+
+void process_command()
+{
+  char *cmd, *args;
+  char *commands[10] = {"mkdir", "ls"};
+  
+  for (int aux = 0; aux < params_list.count; aux++) {
+    if (strncmp(params_list.list[aux].key, "command", 7) != 0)
+      continue;
+
+    cmd = strtok(params_list.list[aux].value, "%20");
+    args = strtok(NULL, "%20");
+
+    for (int index = 0; index < 10; index++) {
+      if (strncmp(commands[index], cmd, strlen(cmd)) == 0) {
+	switch(index) {
+	case 0:
+	  create_directory(args);
+	  break;
+	case 1:
+	  show_files_list();
+	  break;
+	}
+      }
     }
   }
-  printf("Termino process_route\n");
 }
 
 void stop_server()

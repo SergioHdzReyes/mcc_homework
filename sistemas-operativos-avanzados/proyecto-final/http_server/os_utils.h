@@ -69,11 +69,6 @@ int create_regular_file(char *name);
 void install();
 // TERMINA - FUNCIONES DE COMANDOS
 
-
-// INICIAN - Algoritmos
-int iget();
-// TERMINA - Algoritmos
-
 // INICIA - PARAMETROS
 int process_params(int argc, char **argv);
 // TERMINA - PARAMETROS
@@ -105,8 +100,11 @@ void startServer(char *port);
 // Se procesa peticion de cliente
 void process_request(int n);
 
-// Se procesa la ruta solicitada para seleccionar comando correspondiente
+// Se procesa la ruta, se llena estructura de parametros
 void process_route(char *route);
+
+// Con base en estructura de parametros se ejecuta comando correspondiente
+void process_command();
 
 // Se detiene el servidor que corre en background por medio de señales
 void stop_server();
