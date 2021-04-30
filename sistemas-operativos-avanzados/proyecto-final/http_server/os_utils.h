@@ -54,6 +54,9 @@ void clean_os_image();
 // Se establece estatus del sistema
 int set_os_status();
 
+// Instala el sistema operativo
+int install();
+
 
 // INICIA - FUNCIONES DE COMANDOS
 // Crea un directorio
@@ -65,8 +68,7 @@ void show_files_list();
 // Crea un archivo regular
 int create_regular_file(char *name);
 
-// Instala el sistema operativo
-int install();
+int remove_directory();
 // TERMINA - FUNCIONES DE COMANDOS
 
 

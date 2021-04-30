@@ -65,12 +65,22 @@ int load_from_disk()
 
 void print_menu()
 {
-  printf("\nSeleccione una de las siguientes opciones:\n");
-  printf("1) Crear directorio\n");
-  printf("2) Crear archivo\n");
-  printf("3) Mostrar archivos\n");
-  printf("9) Salir de sistema\n");
-  printf("\n\n");
+  char *menu =
+    "Seleccione una de las siguientes opciones:\n"
+    // DIRECTORIOS
+    "1) Crear directorio\n"
+    "2) Borrar directorio\n"
+    "3) Mostrar archivos de directorio\n"
+
+    // ARCHIVOS
+    "4) Crear archivo\n"
+    "5) Borrar archivo\n"
+    "6) Mostrar contenido de archivo\n"
+    "7) Mover archivo\n"
+    "8) Copiar archivo\n"
+    "0) Salir\n";
+
+  printf("%s", menu);
 }
 
 void clean_os_image()
@@ -114,7 +124,7 @@ int create_directory(char *name)
       root_tmp[0].inode = root[count].inode;//.
       root_tmp[1].inode = root[0].inode;//..
       c = root[count].inode / 16;//para saber en que calumna vamos a buscar el inodo 
-      f = (root[count].inode % 16 - 1)*64;//offset para la fila 
+      f = (root[count].inode % 16 - 1);//offset para la fila 
       
 		//en fila y columna asignamos los valores 
       inode_list[f][c].type = 'd'; //directorio
@@ -124,7 +134,7 @@ int create_directory(char *name)
 
       inode_list[f][c].content_table[0] = fbl[fbl_max];//sacando bloque libre 
       fbl_max++;//incrementamos la posicion 
-      memcpy(blocks[inode_list[f][c].content_table[0]] - 9, root_tmp, 1024);//tenemos que guardar el tmp en algun lado para poder crear un directorio nuevo 
+      memcpy(blocks[inode_list[f][c].content_table[0] - 9], root_tmp, 1024);//tenemos que guardar el tmp en algun lado para poder crear un directorio nuevo 
       break; //OJO AL GUARDAR TENEMOS QUE FIJARNOS EN EL -9 (SI LO QUEREMOS PONER O NO), aqui la 9 lo convertimos en 0 
     } //TENEMOS QUE ACOMODAR ESTO AL GUARDAR 
   }
@@ -136,10 +146,11 @@ int create_directory(char *name)
 //AQUI TAMBIEN DEBEMOS TENER EL DIRECTORIO ACTUAL (UN APUNTADOR EN EL CUAL ESTAMOS TRABAJANDO) 
 //ls es para archivos, cat para directorio 
 void show_files_list() //mostrar el inodo y el archivo 
-{ //las busquedas se realizan en el directorio donde estamos trabajando porque no estamos manejando pads 
+{ //las busquedas se realizan en el directorio donde estamos trabajando porque no estamos manejando pads
+  printf("#Inodo \t\tNombre\n");
   for (int aux=0; aux < 64; aux++) {
     if (root[aux].inode != 0) {
-      printf("%d %s", root[aux].inode, root[aux].nombre);
+      printf("%d\t\t%s\n", root[aux].inode, root[aux].nombre);
     }
   }
 }
@@ -185,13 +196,47 @@ int create_regular_file(char *name)
 
       inode_list[f][c].content_table[0] = fbl[fbl_max];
       fbl_max++;
-      memcpy(blocks[inode_list[f][c].content_table[0]] - 9, root_tmp, 1024);
+      memcpy(blocks[inode_list[f][c].content_table[0] - 9], root_tmp, 1024);
       break;
     }
   }
   
   return 0;
 }
+
+int remove_directory(char *name)
+{
+   int c, f;
+   
+   for (int count = 2; count < 63; count++) {
+     if (strncmp(root[count].nombre, name, strlen(name)) == 0) {
+       c = (root[count].inode / 16);
+       f = (root[count].inode % 16) - 1;
+
+       int *dato = (int *) &blocks[inode_list[f][c].content_table[0]][32];
+       
+       if (inode_list[f][c].type == 'd') {
+	 if (*dato == 0) {
+	   inode_list[f][c].type = '0';
+	   
+	   fil_max--;
+	   fil[fil_max] = root[count].inode;
+	   root[count].inode = 0;
+	   strcpy(root[count].nombre, "");
+
+	   fbl_max--;
+	   fbl[fbl_max] = inode_list[f][c].content_table[0];
+	 } else {
+	   printf("No fue posible borrar el directorio. El directorio tiene contenido.\n");
+	   return 1;
+	 }
+       }
+    }
+  }
+
+   return 0;
+}
+// TERMINA - FUNCIONES DE COMANDOS
 
 int install()
 {
@@ -217,7 +262,6 @@ int install()
   
   return 0;
 }
-// TERMINA - FUNCIONES DE COMANDOS
 
 
 // INICIA - PARAMETROS
