@@ -11,20 +11,16 @@ nuestro sistema tendra 1MB de informacion.
 50 Archivos
 
 *******************************************************************************************************************************************************************************/
-
 #include "os_utils.h"
 
-int main(int argc, char **argv)
+//int main(int argc, char **argv)
+int main()
 {
   int opc, end = 0;
-  char name[12], directory_name[12]; //No puede pasar de 12 porque ese es el tamaño que tenemos para el nombre en el directorio. 
-
-  os_open_image();
-  //process_params(argc, argv);
+  char buffer[100], name[12], directory_name[12]; //No puede pasar de 12 porque ese es el tamaño que tenemos para el nombre en el directorio.
 
   while (1) {
     // Remover y correr servidor en lugar de este menu
-    //system("clear");
     print_menu();
     scanf("%d", &opc);
 
@@ -42,50 +38,62 @@ int main(int argc, char **argv)
       remove_directory(name);
       break;
     case 3:
-      show_files_list();
+      printf("Escribe el nombre del directorio a mostrar: ");
+      scanf("%s", name);
+      show_files_list(name);
       break;
     case 4:
       printf("Escribe el nombre del archivo: ");
       scanf("%s", name);
-      system("clear");
-      create_regular_file(name);
+
+      printf("\nIngresa el contenido del archivo: ");
+      scanf("%*c%[^\n]",buffer);
+      create_regular_file(name, buffer);
       break;
     case 5:
       printf("Escribe el nombre del archivo a borrar: ");
       scanf("%s", name);
-      system("clear");
-      //remove_file(name);
+      remove_file(name);
       break;
     case 6:
       printf("Escribe el nombre del archivo a mostrar: ");
       scanf("%s", name);
-      //show_file_content(name);
+      show_file_content(name);
       break;
     case 7:  // MOVER ARCHIVO Y ELIMINAR EL ORIGINAL
       printf("Escribe el nombre del archivo a mover: ");
       scanf("%s", name);
       printf("Escribe el directorio destino: ");
       scanf("%s", directory_name);
-      //move_file(name, directory_name);
+      move_file(name, directory_name);
       break;
     case 8:
       printf("Escribe el nombre del archivo a copiar: ");
       scanf("%s", name);
       printf("Escribe el directorio destino: ");
       scanf("%s", directory_name);
-      //move_file(name, directory_name);
+      copy_file(name, directory_name);
+      break;
+    case 9:
+      printf("Escribe el nombre del directorio: ");
+      scanf("%s", name);
+      change_directory(name);
+      break;
+    case 10:
+      show_current_directory();
       break;
     case 0:
       //save_to_disk();
       end = 1;
       break;
     }
+    printf("\n");
 
     if (end) {
       break;
     }
   }
 
-  close(os_fd);
+  //close(os_fd);
   return 0;
 }

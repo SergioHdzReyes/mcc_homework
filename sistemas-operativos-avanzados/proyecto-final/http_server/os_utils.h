@@ -63,12 +63,24 @@ int install();
 int create_directory(char *name);
 
 // Mostrar archivos
-void show_files_list();
+void show_files_list(char *name);
 
 // Crea un archivo regular
-int create_regular_file(char *name);
+int create_regular_file(char *name, char *data);
 
-int remove_directory();
+int remove_directory(char *name);
+
+int remove_file(char *name);
+
+int show_file_content(char *name);
+
+int move_file(char *filename, char *directory_name);
+
+int change_directory(char *name);
+
+int show_current_directory();
+
+int copy_file(char *name, char *dest_dir);
 // TERMINA - FUNCIONES DE COMANDOS
 
 
