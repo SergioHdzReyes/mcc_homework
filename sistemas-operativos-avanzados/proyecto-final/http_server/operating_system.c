@@ -18,6 +18,7 @@ int main()
 {
   int opc, end = 0;
   char buffer[100], name[12], directory_name[12]; //No puede pasar de 12 porque ese es el tamaño que tenemos para el nombre en el directorio.
+  user_login();
 
   while (1) {
     // Remover y correr servidor en lugar de este menu
@@ -28,13 +29,11 @@ int main()
     case 1:
       printf("Escribe el nombre del directorio: ");
       scanf("%s", name);
-      system("clear");
       create_directory(name);
       break;
     case 2:
       printf("Escribe el nombre del directorio a borrar: ");
       scanf("%s", name);
-      system("clear");
       remove_directory(name);
       break;
     case 3:
@@ -82,8 +81,13 @@ int main()
     case 10:
       show_current_directory();
       break;
+    case 11:
+      user_login();
+      break;
+    case 12:
+      system("clear");
+      break;
     case 0:
-      //save_to_disk();
       end = 1;
       break;
     }
@@ -94,6 +98,5 @@ int main()
     }
   }
 
-  //close(os_fd);
   return 0;
 }

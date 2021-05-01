@@ -9,17 +9,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <time.h>
+#include <stdint.h>
 
 #define OS_FILENAME "os_image"
 #define MAX_FILENAME_SIZE 12
 
 // Estructura de inodo
 typedef struct inode {
-  int size;
+  unsigned int size;
   char type;
   char owner;
-  int date;
-  int dummy;
+  unsigned int date;
+  //int dummy;
   char permissions[6];
   int content_table[11];
 } inode_list_t;
@@ -29,6 +31,11 @@ typedef struct directory {
   int inode;
   char nombre[MAX_FILENAME_SIZE];
 } dir;
+
+typedef struct user{
+  char id;
+  char name[12];
+} user_t;
 
 int os_fd;
 
@@ -56,6 +63,8 @@ int set_os_status();
 
 // Instala el sistema operativo
 int install();
+
+void user_login();
 
 
 // INICIA - FUNCIONES DE COMANDOS

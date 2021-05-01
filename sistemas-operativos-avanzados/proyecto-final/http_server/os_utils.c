@@ -2,7 +2,7 @@
 
 
 // Elementos principales
-inode_list_t inode_list[16][4] = {{{0}}, {{1024, 'D', 0, 0, 0, "rwxrwx", {8}}}};//16 filas x 4 columnas
+inode_list_t inode_list[16][4] = {{{0}}, {{1024, 'D', 0, 0, "rwxrwx", {8}}}};//16 filas x 4 columnas
 
 dir root[64] = {{2, "."}, {2, ".."}};
 dir root_tmp[64] = {{0, "."}, {0, ".."}}; //
@@ -17,11 +17,33 @@ int fbl_max = 0; //tope
 //si libero un bloque o inodo entonces debe regresarse una posicion y escribirlo ahi 
 
 char dir_nombre[MAX_FILENAME_SIZE];
-char blocks[50][1024] = {'\0'};//Declarando la variable que vamos a utilizar para escribir los bloques
+char blocks[1017][1024] = {'\0'};//Declarando la variable que vamos a utilizar para escribir los bloques
 // Estatus del sistema, 0 no instalado, 1 instalado
 int OS_STATUS = 0;
 dir curr_dir = {2, "/"};
 
+user_t users[20] = {{'1', "sergio"}, {'2', "jessica"}, {'3', "leonardo"}};
+char curr_user;
+
+void user_login()
+{
+  char name[12];
+  int success = 0;
+  
+  printf("Ingresa tu nombre de usuario: ");
+  scanf("%s", name);
+
+  for (int aux = 0; aux < 20; aux++) {
+    if (strncmp(users[aux].name, name, strlen(name)) == 0) {
+      curr_user = users[aux].id;
+      success = 1;
+    }
+  }
+
+  if (!success) {
+    printf("Usuario no encontrado\n");
+  }
+}
 
 int os_open_image()
 {
@@ -55,15 +77,93 @@ int save_to_disk()
   write(os_fd, fbl, 1024);
   write(os_fd, fil, 1024);
   write(os_fd, inode_list, 1024*4);
-  write(os_fd, root, 1024);
+  write(os_fd, blocks, 1024*1017);
 
   return 0;
 }
 
 int load_from_disk()
 {
+  char info[1024] = {0};
+  int *tmp, kb = 1024;
+
+  os_open_image();
+  
+  /* // Se carga informacion de bloque 2 (lista de bloques libres) */
+  lseek(os_fd, kb, SEEK_SET);
+  read(os_fd, info, kb);
+
+  tmp = (int *)&info;
+  printf("TMP: %d", *tmp);
+
+  for (int aux = 0; aux < 256; aux++) {
+    if (*tmp != 0) {
+      fbl[aux] = *tmp;
+    } else {
+      fbl[aux] = 0;
+    }
+
+    tmp++;
+  }
+  
+  /* // Se carga informacion de bloque 3 (lista de inodos libres) */
+  //lseek(os_fd, kb*2, SEEK_SET);
+  memset(info, '\0', kb);
+  read(os_fd, info, kb);
+
+  tmp = (int *)&info;
+  printf("TMP: %d", *tmp);
+
+  for (int aux = 0; aux < 16; aux++) {
+    if (*tmp != 0) {
+      fil[aux] = *tmp;
+    } else {
+      fil[aux] = 0;
+    }
+
+    tmp++;
+  }
+  printf("FIL_MAX: %d\n", *tmp);
+  fil_max = *tmp;
+  tmp++;
+  printf("FBL_MAX: %d\n", *tmp);
+  fbl_max = *tmp;
+
+  // Se carga informacion de lista de inodos
+  lseek(os_fd, kb*3, SEEK_SET);
+  struct inode_list_t *inode_struct;
+  for (int c = 0; c < 4; c++) {
+    memset(info, '\0', kb);
+    read(os_fd, info, kb); // Se lee un bloque de la lista de inodos
+    for (int f = 0; f < 16; f++) {
+      inode_struct = (struct inode_list_t *)&info;
+      //inode_list[f][c];
+
+      memcpy(&inode_list[f][c], inode_struct, 64);
+
+      //inode_struct++;
+    }
+  }
+
+  // Se carga informacion de bloques
+  lseek(os_fd, kb*7, SEEK_SET);
+  //read(os_fd, info, kb*5);
+  //printf("INFO_ARCHIVO: %s\n", info);
+  for (int aux = 0; aux < 993; aux++) {
+    memset(info, '\0', kb);
+    read(os_fd, info, kb);
+    strcpy(blocks[aux], info);
+  }
+
+  close(os_fd);
+  
   return 0;
 }
+
+/* int load_from_disk() */
+/* { */
+/*   return 0; */
+/* } */
 
 void print_menu()
 {
@@ -82,6 +182,8 @@ void print_menu()
     "8) Copiar archivo\n"
     "9) Cambiar de directorio\n"
     "10) Mostrar directorio actual\n"
+    "11) Cambiar de usuario\n"
+    "12) Limpiar pantalla\n"
     "0) Salir\n";
 
   printf("%s", menu);
@@ -122,21 +224,27 @@ int create_directory(char *name)
     if (root[count].inode  == 0) { // Primer espacio para inodo, 0 significa que esta disponible 
       strcpy(root[count].nombre, name); //copiamos el nombre para asignarselo 
       root[count].inode = fil[fil_max]; // siguiente inodo disponible, lo encuentra porque es igual a 0 y le asignamos el indice de fil
+      fil[fil_max] = 0;
       fil_max++;//incrementamos fil porque ya usamos una
 
       // utilizar el directorio actual, MODIFICAR
       root_tmp[0].inode = root[count].inode;//.
-      root_tmp[1].inode = root[0].inode;//..
+      root_tmp[1].inode = curr_dir.inode;//..
+      
+      
       c = root[count].inode / 16;//para saber en que calumna vamos a buscar el inodo 
       f = (root[count].inode % 16 - 1);//offset para la fila 
       
 		//en fila y columna asignamos los valores 
       inode_list[f][c].type = 'd'; //directorio
-      inode_list[f][c].size = 1024; //bloque 
-      inode_list[f][c].date = 170421; //fecha 
-      inode_list[f][c].owner = '1';
+      inode_list[f][c].size = 1024; //bloque
 
-      inode_list[f][c].content_table[0] = fbl[fbl_max];//sacando bloque libre 
+      time_t tiempo = time(0);
+      inode_list[f][c].date = (intmax_t)tiempo; //fecha 
+      inode_list[f][c].owner = curr_user;
+
+      inode_list[f][c].content_table[0] = fbl[fbl_max];//sacando bloque libre
+      fbl[fbl_max] = 0;
       fbl_max++;//incrementamos la posicion 
       memcpy(blocks[inode_list[f][c].content_table[0] - 9], root_tmp, 1024);//tenemos que guardar el tmp en algun lado para poder crear un directorio nuevo 
       break; //OJO AL GUARDAR TENEMOS QUE FIJARNOS EN EL -9 (SI LO QUEREMOS PONER O NO), aqui la 9 lo convertimos en 0 
@@ -153,11 +261,19 @@ void show_files_list(char *name) //mostrar el inodo y el archivo
 { //las busquedas se realizan en el directorio donde estamos trabajando porque no estamos manejando pads
   int f, c;
 
+  printf("#Inodo \t\tNombre \t\tFecha\n");
+
   if (strncmp("root", name, strlen(name)) == 0) {
-    printf("#Inodo \t\tNombre\n");
     for (int aux=0; aux < 64; aux++) {
+      c = root[aux].inode / 16;
+      f = (root[aux].inode % 16 - 1);
+      
       if (root[aux].inode != 0) {
-	printf("%d\t\t%s\n", root[aux].inode, root[aux].nombre);
+	if (root[aux].inode == 2) {
+	  printf("%d\t\t%s\n", root[aux].inode, root[aux].nombre);
+	} else {
+	  printf("%d\t\t%s\t\t%d\n", root[aux].inode, root[aux].nombre, inode_list[f][c].date);
+	}
       } else {
 	break;
       }
@@ -173,7 +289,7 @@ void show_files_list(char *name) //mostrar el inodo y el archivo
 
 	  while (1) {
 	    if (dato->inode > 0) {
-	      printf("%d\t\t%s\n", dato->inode, dato->nombre);
+	      printf("%d\t\t%s\t\t%d\n", dato->inode, dato->nombre, inode_list[f][c].date);
 	    } else {
 	      break;
 	    }
@@ -214,6 +330,7 @@ int create_regular_file(char *name, char *data)
     if (root[count].inode  == 0) { // Primer espacio para inodo
       strcpy(root[count].nombre, name);
       root[count].inode = fil[fil_max]; // siguiente inodo disponible
+      fil[fil_max] = 0;
       fil_max++;
 
       // utilizar el directorio actual, modificar
@@ -222,10 +339,14 @@ int create_regular_file(char *name, char *data)
 
       inode_list[f][c].type = '-';
       inode_list[f][c].size = strlen(name);
-      inode_list[f][c].date = 170421;
-      inode_list[f][c].owner = '1';
+
+      time_t tiempo = time(0);
+      inode_list[f][c].date = (intmax_t)tiempo; //fecha
+      
+      inode_list[f][c].owner = curr_user;
 
       inode_list[f][c].content_table[0] = fbl[fbl_max];
+      fbl[fbl_max] = 0;
       fbl_max++;
 
       memset(blocks[inode_list[f][c].content_table[0] - 9], '\0', 1024);
@@ -246,7 +367,12 @@ int remove_directory(char *name)
        c = (root[count].inode / 16);
        f = (root[count].inode % 16) - 1;
 
-       int *dato = (int *) &blocks[inode_list[f][c].content_table[0]][32];
+       int *dato = (int *) &blocks[inode_list[f][c].content_table[0] - 9][32];
+
+       if (inode_list[f][c].owner != curr_user) {
+	 printf("No fue posible borrar el directorio. No tiene permisos de borrar.\n");
+	 return 1;
+       }
        
        if (inode_list[f][c].type == 'd') {
 	 if (*dato == 0) {
@@ -278,9 +404,13 @@ int remove_file(char *name)
      if (strncmp(root[count].nombre, name, strlen(name)) == 0) {
        c = (root[count].inode / 16);
        f = (root[count].inode % 16) - 1;
+
+       if (inode_list[f][c].owner != curr_user) {
+	 printf("No fue posible borrar el archivo. No tiene permisos de borrar.\n");
+	 return 1;
+       }
        
        if (inode_list[f][c].type == '-') {
-	 printf("ALGO");
 	 inode_list[f][c].type = '0';
 	   
 	 fil_max--;
@@ -305,6 +435,11 @@ int show_file_content(char *name)
      if (strncmp(root[count].nombre, name, strlen(name)) == 0) {
        c = (root[count].inode / 16);
        f = (root[count].inode % 16) - 1;
+
+       if (inode_list[f][c].owner != curr_user) {
+	 printf("No es posible ver el archivo. No tiene permisos de lectura.\n");
+	 return 1;
+       }
        
        if (inode_list[f][c].type == '-') {
 	 printf("%s\n", blocks[inode_list[f][c].content_table[0] - 9]);
@@ -323,6 +458,11 @@ int move_file(char *filename, char *directory_name)
      if (strncmp(root[count].nombre, filename, strlen(filename)) == 0) {
        c = (root[count].inode / 16);
        f = (root[count].inode % 16) - 1;
+
+       if (inode_list[f][c].owner != curr_user) {
+	 printf("No es posible mover el archivo. No tiene permisos.\n");
+	 return 1;
+       }
        
        if (inode_list[f][c].type == '-') {
 
@@ -373,6 +513,11 @@ int change_directory(char *name)
       if (strncmp(root[count].nombre, name, strlen(name)) == 0) {
 	c = (root[count].inode / 16);
 	f = (root[count].inode % 16) - 1;
+
+	if (inode_list[f][c].owner != curr_user) {
+	  printf("No es posible cambiar de directorio. No tiene permisos para acceder a ese directorio.\n");
+	  return 1;
+	}
        
 	if (inode_list[f][c].type == 'd') {
 	  curr_dir.inode = root[count].inode;
@@ -402,6 +547,11 @@ int copy_file(char *filename, char *dest_dir)
      if (strncmp(root[count].nombre, filename, strlen(filename)) == 0) {
        c = (root[count].inode / 16);
        f = (root[count].inode % 16) - 1;
+
+       if (inode_list[f][c].owner != curr_user) {
+	 printf("No es posible copiar el archivo. No tiene permisos.\n");
+	 return 1;
+       }
        
        if (inode_list[f][c].type == '-') {
 	 for (int countd = 2; countd < 63; countd++) {
@@ -423,8 +573,9 @@ int copy_file(char *filename, char *dest_dir)
 
 		   inode_list[f_new][c_new].type = inode_list[f][c].type;
 		   inode_list[f_new][c_new].size = inode_list[f][c].size;
-		   inode_list[f_new][c_new].date = inode_list[f][c].date;
-		   inode_list[f_new][c_new].owner = inode_list[f][c].date;
+		   time_t tiempo = time(0);
+		   inode_list[f_new][c_new].date = (intmax_t)tiempo; //fecha
+		   inode_list[f_new][c_new].owner = inode_list[f][c].owner;
 		   
 		   strcpy(dato->nombre, filename);
 
@@ -535,7 +686,3 @@ int process_params(int argc, char **argv)
 // TODO Multiusuario(Revisar OWNER)
 // TODO Utilizar directorio actual en todas las funciones
 // TODO Guardar en disco
-
-
-
-// Conectar el SERVIDOR
