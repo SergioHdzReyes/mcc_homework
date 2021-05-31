@@ -11,6 +11,7 @@
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
 \usepackage[utf8]{inputenc}
+%\usepackage{natbib}
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
 
 \renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
@@ -21,10 +22,10 @@
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{Arquitectura de Microcontroladores \\ Reporte de Práctica/Investigación \\ Nombre de Actividad} % Title
+\title{Arquitectura de Microcontroladores \\ Reporte de Práctica/Investigación \\ Introducción a la arquitectura de los microcontroladores y microprocesadores} % Title
 
 
-\author{Nombre Alumno} % Author name
+\author{Sergio Hernández Reyes} % Author name
 
 \date{\today} % Date for the report
 
@@ -36,25 +37,16 @@
 
 % If you wish to include an abstract, uncomment the lines below
  \begin{abstract}
- Abstract text
+ El siguiente artículo consiste en una investigación acerca de la arquitectura de los microcontroladores, para ello tomaremos 3 de diferentes marcas comparandolos en sus características de memoria.
  \end{abstract}
 
 %----------------------------------------------------------------------------------------
 %	SECTION 1
 %----------------------------------------------------------------------------------------
 
-\section{Objective}
+\section{Objectivo}
 
-To determine the atomic weight of magnesium via its reaction with oxygen and to study the stoichiometry of the reaction (as defined in \ref{definitions}):
-
-
-% If you have more than one objective, uncomment the below:
-%\begin{description}
-%\item[First Objective] \hfill \\
-%Objective 1 text
-%\item[Second Objective] \hfill \\
-%Objective 2 text
-%\end{description}
+Poder diferenciar y comparar entre distintos microcontroladores logrando así tener una visión acerca de las características de cada uno de ellos.
 
 
 %----------------------------------------------------------------------------------------
@@ -62,7 +54,13 @@ To determine the atomic weight of magnesium via its reaction with oxygen and to 
 %----------------------------------------------------------------------------------------
 
 \section{Desarrollo}
+Se toman 3 microcontroladores de diferentes marcas para realizar esta comparación:
 
+\begin{enumerate}
+    \item {\bf PIC16F877A (Microchip)}
+    \item {\bf MC68HC711E9 (Motorola)}
+    \item {\bf Quark SE C1000 (Intel)}
+\end{enumerate}
 
 
 %----------------------------------------------------------------------------------------
@@ -70,29 +68,35 @@ To determine the atomic weight of magnesium via its reaction with oxygen and to 
 %----------------------------------------------------------------------------------------
 
 \section{Resultados}
-
+Con base a la información contenida en cada data sheet se obtuvieron los siguientes resultados:
+\begin{enumerate}
+    \item Para el microcontrolador {\bf PIC16F877A} se tiene una memoria SRAM de 368 bytes, memoria EEPROM de 256 bytes \cite{microship}.
+    \item Para el microcontrolador {\bf MC68HC711E9} se tiene una memoria RAM de 512 bytes, memoria EPROM de 12 Kb, memoria EEPROM de 512 bytes \cite{motorola}.
+    \item Para el microcontrolador {\bf Quark SE C1000} se tiene una memoria SRAM de 80 Kb, memoria ROM de 8Kb \cite{intel}.
+\end{enumerate}
 
 %----------------------------------------------------------------------------------------
 %	SECTION 4
 %----------------------------------------------------------------------------------------
 
 \section{Conclusiones}
+Con esto podemos ver que hay diferentes arquitecturas de diferentes marcas, cada empresa proporciona diferentes microcontroladores variando en cada uno características o capacidades, ya sera cuestión del programador elegir el que se adecúe más a las necesidades tomando en cuenta costos, rendimiento y características en general.
 
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=0.65\textwidth]{placeholder} % Include the image placeholder.png
-\caption{Figure caption.}
-\end{center}
-\end{figure}
+%\begin{figure}[h]
+%\begin{center}
+%\includegraphics[width=0.65\textwidth]{placeholder} % Include the image placeholder.png
+%\caption{Figure caption.}
+%\end{center}
+%\end{figure}
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------
 
-\bibliographystyle{apalike}
-
-
-\bibliography{sample}
+%\bibliographystyle{apalike}
+\bibliographystyle{plain}
+\renewcommand{\refname}{Referencias}
+\bibliography{refs}
 %----------------------------------------------------------------------------------------
 
 
