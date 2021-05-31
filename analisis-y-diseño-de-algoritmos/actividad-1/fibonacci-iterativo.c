@@ -6,12 +6,13 @@ int main() {
 
    last = 0;
    current = 1;
-   
-   printf("%d %d ", last, current);
 
-   for(i = 1; i <= n-2; i++) {
+   for(i = 0; i <= n-2; i++) {
       new = last + current;
-      printf("%d ", new);
+
+      if ((i + 2) == n) {
+	printf("%d", new);
+      }
       
       last = current;
       current = new;
