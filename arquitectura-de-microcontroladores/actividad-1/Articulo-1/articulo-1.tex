@@ -1,0 +1,108 @@
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+
+\usepackage[version=3]{mhchem} % Package for chemical equation typesetting
+\usepackage{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
+\usepackage{graphicx} % Required for the inclusion of images
+\usepackage{natbib} % Required to change bibliography style to APA
+\usepackage{amsmath} % Required for some math elements 
+\usepackage[utf8]{inputenc}
+%\usepackage{natbib}
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+\renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
+
+%\usepackage{times} % Uncomment to use the Times New Roman font
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{Requisitos Industriales sobre la Evolución de la Arquitectura de Sistemas Embebidos} % Title
+
+
+\author{Sergio Hernández Reyes} % Author name
+
+\date{\today} % Date for the report
+
+\begin{document}
+
+\maketitle % Insert the title, author and date
+
+
+
+% If you wish to include an abstract, uncomment the lines below
+\renewcommand{\abstractname}{Abstracto}
+\begin{abstract}
+El siguiente es un resumen sobre el artículo \cite{ieee}.
+\end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+\section{Objectivo}
+Poder tener una noción sobre la evolución de algún sistema embebido a travez del tiempo.
+
+
+
+%----------------------------------------------------------------------------------------
+%	SECTION 2
+%----------------------------------------------------------------------------------------
+\section{Desarrollo}
+Se realiza una lectura del articulo completo resaltando las partes importantes del mismo.
+
+
+%----------------------------------------------------------------------------------------
+%	SECTION 3
+%----------------------------------------------------------------------------------------
+\section{Resultados}
+{\bf Introducción}\\
+El mantenimiento, actualización o reemplazo de piezas de software o hardware puede ser tedioso o imposible ya que un sistema como estos puede durar 30 años, te enfrentas a un problema en el que no sabes si reemplazar o actualizar debido a que se vuelve obsoleto.\\
+
+Las necesidades pueden cambiar al ocupar más velocidad de red, más computo, o la introducción de una nueva tecnología que puede cambiar la arquitectura completa del sistema.\\
+\\Las empresas se enfrentan a un proceso de evolución y esto nos lleva a buscar una manera de dejar a los sistemas lo más preparado posibles para esto, lo cual nos hace pensar e imaginar en posibles tecnologías que pudieran surgir.\\
+
+\\{\bf Definición de problema}\\
+Las empresas saben que al desarrollar un sistema se debe tomar en cuenta el echo de tener que actualizar sus componentes o su sistema entero de ser necesario, para ello se seleccionan las siguientes áreas que son las principales en la evolución de un sistema:\\
+
+\begin{enumerate}
+    \item {\bf Componentes obsoletos:} podría ser necesario modificar el hardware y esto nos llevaría a también modificar software que podría ser no compatible del todo con este, lo que nos lleva a que se tengan que hacer de nuevo las pruebas necesarias.
+    \item {\bf Requisitos funcionales/no-funcionales:} al actualizar el hardware se puede obtener una ejecución de código mas rápida y por lo tanto una respuesta mas rápida que la esperada, pudiendo afectar si ya se tiene establecido un tiempo de respuesta.
+Requisitos no-funcionales: rendimiento, seguridad, ciber seguridad.
+    \item {\bf Prueba/Verificación:} Al actualizar un sistema viejo, deben realizarse las pruebas pertinentes para comprobar que el nuevo software/hardware funcionan en esta actualización sin afectar el rendimiento.
+\end{enumerate}\\
+
+\\{\bf Trabajos relacionados}\\
+Hay muchos articulos de diferentes areas que intentan promover algun tipo de solucion a la actualizacion de sistemas obsoletos.
+
+
+
+%----------------------------------------------------------------------------------------
+%	SECTION 4
+%----------------------------------------------------------------------------------------
+\section{Conclusiones}
+Podemos decir que en los sitemas embebidos nos enfrentaremos siempre a estos problemas, si tenemos un sistema embebido ya desarrollado, tarde o temprano tendremos que actualizarlo tanto por software o hardware. Así también si vamos a desarrollarlo desde cero debemos tomar esto en cuenta, pensando en dejar preparado de la mejor forma posible para que llegue el dia de actualizar o mejorar, no se nos complique o sea lo mas facil posible.
+
+%\begin{figure}[h]
+%\begin{center}
+%\includegraphics[width=0.65\textwidth]{placeholder} % Include the image placeholder.png
+%\caption{Figure caption.}
+%\end{center}
+%\end{figure}
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+%\bibliographystyle{apalike}
+\bibliographystyle{plain}
+\renewcommand{\refname}{Referencias}
+\bibliography{refs}
+%----------------------------------------------------------------------------------------
+
+
+\end{document}
