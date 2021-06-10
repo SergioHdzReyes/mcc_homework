@@ -8,6 +8,7 @@
 \usepackage[version=3]{mhchem} % Package for chemical equation typesetting
 \usepackage{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
 \usepackage{graphicx} % Required for the inclusion of images
+\usepackage{wrapfig}
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
 \usepackage[utf8]{inputenc}
@@ -23,7 +24,7 @@
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{Arquitectura de Microcontroladores \\ Practica 1} % Title
+\title{Arquitectura de Microcontroladores \\ Practica 1B} % Title
 
 
 \author{Sergio Hernández Reyes} % Author name
@@ -41,7 +42,7 @@
 %----------------------------------------------------------------------------------------
 \section{Objectivo}
 
-Conocer el IDE de desarrollo MPLAB así como sus características y su modo de funcionamiento. En esta practica se intentara correr un código base en el lenguaje ensamblador con el fin de ir debuggeando paso a paso su ejecución.
+Conocer el IDE de desarrollo MPLAB así como sus características y su modo de funcionamiento. En esta práctica se creará un código en C con el fin de encender un led o apagarlo por medio de un switch utilizando el PIC16F15313.
 
 
 
@@ -49,21 +50,23 @@ Conocer el IDE de desarrollo MPLAB así como sus características y su modo de f
 %	SECTION 2
 %----------------------------------------------------------------------------------------
 \section{Desarrollo}
-Se instalo MPLAB correctamente, se crea nuevo proyecto utilizando compilador mpasm (v5.86)\\
-\includegraphics[width=\textwidth]{compilation}\\
-Se corre programa con debug habilitado\\
-\includegraphics[width=\textwidth]{debug-init}\\
-Se pausa ejecución y se avanza siguiente instrucción\\
-\includegraphics[width=\textwidth]{debug1}\\
-Se continua con siguiente instrucción\\
-\includegraphics[width=\textwidth]{debug2}\\
+Se crea proyecto con compilador XC8, se crea estructura por medio de Mplab Code Configurator.\\
+\includegraphics[width=\textwidth]{mplab}\\
+\newline
+\newline
+
+Se arma circuito para bajar el hexadecimal al microcontrolador por medio del pickit3 y con el uso del MPLAB X Ipe\\
+\includegraphics[scale=0.3]{pickit3}\\
+\newline
+\newline
 
 
 %----------------------------------------------------------------------------------------
 %	SECTION 3
 %----------------------------------------------------------------------------------------
 \section{Resultados}
-Se corrió la ejecución del programa base obteniendo así un ciclo infinito con el fin de ir debuggeando cada parte del mismo, con el objetivo de familiarizarnos con las herramientas de debuggeo y el IDE en general.
+Una vez quemado el pic, se procede a armar el circuito que incluye el push boton, el led, y la resistencia correspondiente para poder mostrar el blinking led.\\
+\includegraphics[scale=0.3]{led}\\
 
 
 
@@ -71,7 +74,7 @@ Se corrió la ejecución del programa base obteniendo así un ciclo infinito con
 %	SECTION 4
 %----------------------------------------------------------------------------------------
 \section{Conclusiones}
-Podemos concluir que nuestro código se ejecuto y está listo para bajarse a nuestro microcontrolador. Que tenemos las herramientas bien configuradas y funcionando en nuestro IDE.
+Con esta practica pudimos utilizar lo necesario para compilar un código en C y bajarlo a nuestro microcontrolador así como manipular sus entradas y salidas.
 
 %\begin{figure}[h]
 %\begin{center}
